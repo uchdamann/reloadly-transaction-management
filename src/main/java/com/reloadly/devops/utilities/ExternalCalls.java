@@ -1,5 +1,6 @@
 package com.reloadly.devops.utilities;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.reloadly.devops.exceptions.AppException;
 import com.reloadly.devops.response.dtos.OauthDTO;
+import com.reloadly.devops.response.dtos.ResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,5 +84,63 @@ public class ExternalCalls {
 			log.info("---->>> No Response from escrow server");
 			throw new AppException("---->>> No Response from escrow server");
 		}
+	}
+	
+	public Optional<Map<String, Object>> validateAccountNumberExternally(String accountNumber) {
+		log.info("---->>> Initiating process to externally validate Account Number:, {}", accountNumber);
+		Map<String, Object> responseDTO = null;
+
+		HttpHeaders requestHeader = new HttpHeaders();
+		final String URL = props.getAccountCreationService() + "/validate-account-number/" + accountNumber;
+
+		requestHeader.setContentType(MediaType.APPLICATION_JSON);
+		requestHeader.add("Authorization",
+				"Bearer " + generateAuthServeTokenClientCredentialsGrantType().getAccessToken());
+		requestHeader.add("ChannelCode", props.getWebChannelCode());
+
+		ResponseEntity<String> response = restTemplate.getForEntity(URL, String.class);
+
+		if (response != null) {
+			responseDTO = JsonBuilder.toClassTypeReference(response.getBody(), new TypeReference<Map<String, Object>>() {});
+
+			return Optional.of(responseDTO);
+
+		} else {
+			log.info("---->>> No Response from escrow server");
+			throw new AppException("---->>> No Response from escrow server");
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public String updateBalanceExt (String accountNumber, BigDecimal amount) {
+		String basicAuth = props.getClientId() + ":" + props.getClientSecret();
+
+		HttpHeaders requestHeader = new HttpHeaders();
+		requestHeader.setContentType(MediaType.APPLICATION_JSON);
+		requestHeader.add("Authorization", "Basic " + Base64.getEncoder().encodeToString(basicAuth.getBytes()));
+
+		MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+		requestBody.put("amount", Arrays.asList(amount));
+		requestBody.put("accountNumber", Arrays.asList(accountNumber));
+		requestBody.put("grant_type", Arrays.asList(props.getGrantTypeClientCredentials()));
+
+		log.info("Auth-server request: {}", requestBody);
+
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, requestHeader);
+		ResponseEntity<String> response = restTemplate.postForEntity(props.getAuthServerUrl(), requestEntity,
+				String.class);
+
+		if (response == null) {
+			throw new AppException("---->>> No Response from authorization server");
+		}
+
+		return response.getBody();
 	}
 }

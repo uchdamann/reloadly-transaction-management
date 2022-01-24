@@ -2,13 +2,11 @@ package com.reloadly.devops.response.dtos;
 
 import java.math.BigDecimal;
 
-
 import lombok.Data;
 
 @Data
-public class AccountDetailsDTO {
-	private String accountHolderName;
+public class UpdateBalanceDTO {
 	private String accountNumber;
-	private BigDecimal balance;
+	private BigDecimal amount;
 
 }
