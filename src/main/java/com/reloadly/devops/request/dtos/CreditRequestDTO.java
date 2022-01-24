@@ -1,12 +1,11 @@
 package com.reloadly.devops.request.dtos;
 
-import java.math.BigDecimal;
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class CreditRequestDTO {
-	private String accountNumber;
+@EqualsAndHashCode(callSuper = false)
+public class CreditRequestDTO extends TransactionDTO {
 	private String creditorName;
-	private BigDecimal amount;
+
 }

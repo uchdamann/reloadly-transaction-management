@@ -7,7 +7,6 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
 
 import com.reloadly.devops.constants.TransactionType;
 
@@ -31,7 +30,4 @@ public class Transaction extends CommonFields implements Serializable {
 	private BigDecimal accountBalance;
 	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
-	@ManyToOne
-	private AccountDetails accountDetails;
-
 }

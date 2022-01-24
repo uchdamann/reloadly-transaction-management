@@ -24,4 +24,5 @@ public class AppProperties {
 	private String webChannelCode;
 	private String mobileConsumerChannelCode;
 	private int tokenExpiry;
+	private String accountCreationService;
 }

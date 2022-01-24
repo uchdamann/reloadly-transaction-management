@@ -1,5 +1,5 @@
 package com.reloadly.devops.constants;
 
 public enum TransactionType {
-	DEBIT, CREDIT;
+	DEBIT, CREDIT, TRANSFER;
 }
