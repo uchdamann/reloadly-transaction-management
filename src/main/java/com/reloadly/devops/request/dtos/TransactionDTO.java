@@ -8,7 +8,7 @@ import com.reloadly.devops.constants.TransactionType;
 import lombok.Data;
 
 @Data
-public abstract class TransactionDTO {
+public class TransactionDTO {
 	private String accountNumber;
 	private Date transactionDate;
 	private TransactionType transactionType;

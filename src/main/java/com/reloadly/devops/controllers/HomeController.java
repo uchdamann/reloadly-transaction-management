@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.reloadly.devops.request.dtos.CreditRequestDTO;
+import com.reloadly.devops.request.dtos.TransactionDTO;
 import com.reloadly.devops.response.dtos.ResponseDTO;
 import com.reloadly.devops.services.TransactionService;
 import com.reloadly.devops.utilities.UtilitiesAndTweaks;
@@ -31,11 +31,11 @@ public class HomeController {
 	private UtilitiesAndTweaks util;
 	
 	@PostMapping("/transaction")
-	public ResponseDTO<String> makeTransaction(@RequestBody @Valid CreditRequestDTO creditRequestDTO, 
+	public ResponseDTO<String> makeTransaction(@RequestBody @Valid TransactionDTO transactionDTO, 
 			HttpServletRequest req){
 		util.channelCodeHandler(req);
 		
-		return transactionService.makeTransaction(creditRequestDTO);
+		return transactionService.makeTransaction(transactionDTO);
 	}
 
 }
