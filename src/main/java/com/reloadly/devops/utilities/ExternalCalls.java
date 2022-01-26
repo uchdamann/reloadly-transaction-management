@@ -17,9 +17,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.reloadly.devops.exceptions.AppException;
-import com.reloadly.devops.request.dtos.AccountCreationNotificationDTO;
 import com.reloadly.devops.request.dtos.BalanceUpdateDTO;
-import com.reloadly.devops.request.dtos.LoginNotificationDTO;
 import com.reloadly.devops.request.dtos.NotificationDTO;
 import com.reloadly.devops.request.dtos.TransactionNotificationDTO;
 import com.reloadly.devops.request.dtos.UpdateNotificationDTO;
@@ -81,13 +79,14 @@ public class ExternalCalls {
 
 		HttpHeaders requestHeader = new HttpHeaders();
 		final String URL = props.getAccountManagementUrl() + "getbalance/" + accountNumber;
-		
-		requestHeader.setContentType(MediaType.APPLICATION_JSON);
-		requestHeader.add("Authorization",
-				"Bearer " + generateAuthServeTokenClientCredentialsGrantType().getAccessToken());
-		requestHeader.add("ChannelCode", props.getWebChannelCode());
 
-		ResponseEntity<String> response = restTemplate.getForEntity(URL, String.class);
+		HttpEntity<String> requestEntity = new HttpEntity<>(null, requestHeader);
+
+		requestHeader.setContentType(MediaType.APPLICATION_JSON);
+		requestHeader.add("ChannelCode", props.getWebChannelCode());
+		requestHeader.add("Authorization", "Bearer "+generateAuthServeTokenClientCredentialsGrantType().getAccessToken());
+
+		ResponseEntity<String> response = restTemplate.postForEntity(URL, requestEntity, String.class);
 
 		if (response != null) {
 			responseDTO = JsonBuilder.toClassTypeReference(response.getBody(),
@@ -122,7 +121,7 @@ public class ExternalCalls {
 					String.class);
 
 			if (response == null) {
-				throw new AppException("---->>> No Response from authorization server");
+				throw new AppException("---->>>");
 			}
 			
 			responseDTO = JsonBuilder.toClassTypeReference(response.getBody(),
@@ -138,7 +137,7 @@ public class ExternalCalls {
 	}
 
 	public void notify(NotificationDTO notificationDTO) {
-		final String URL = props.getMailNotificationUrl();
+		String URL = props.getMailNotificationUrl();
 		HttpEntity<NotificationDTO> requestEntity = null;
 
 		HttpHeaders requestHeader = new HttpHeaders();
@@ -149,22 +148,15 @@ public class ExternalCalls {
 
 		try {
 			switch (notificationDTO.getNotificationType()) {
-			case LOGIN:
-				LoginNotificationDTO loginNotify = (LoginNotificationDTO) notificationDTO;
-				requestEntity = new HttpEntity<>(loginNotify, requestHeader);
 
-				break;
-
-			case SIGNUP:
-				AccountCreationNotificationDTO accountCreationNotificationDTO = (AccountCreationNotificationDTO) notificationDTO;
-				requestEntity = new HttpEntity<>(accountCreationNotificationDTO, requestHeader);
-
-				break;
-
-			default:
+			case TRANSACTION:
+				URL = URL + "send-transact";
 				TransactionNotificationDTO transactionNotificationDTO = (TransactionNotificationDTO) notificationDTO;
 				requestEntity = new HttpEntity<>(transactionNotificationDTO, requestHeader);
 
+				break;
+			default:
+				
 				break;
 			}
 
@@ -173,36 +165,4 @@ public class ExternalCalls {
 			log.info(e.getLocalizedMessage());
 		}
 	}
-	
-//	public EscrowPaymentRequestDTO escrowCredit(EscrowPaymentRequestDTO escrowPaymentRequestDTO) {
-//		log.info("---->>> Initiating process to credit escrow, {}", escrowPaymentRequestDTO);
-//
-//		HttpHeaders requestHeader = new HttpHeaders();
-//		EscrowPaymentRequestDTO escrowPaymentRequestDTO1 = null;
-//		final String escrowCreditURL = props.getEscrowEndpoint() + "credit";
-//
-//		ResponseDTO<EscrowPaymentRequestDTO> responseDTO = null;
-//
-//		requestHeader.setContentType(MediaType.APPLICATION_JSON);
-//		requestHeader.add("Authorization",
-//				"Bearer " + generateAuthServeTokenClientCredentialsGrantType().getAccessToken());
-//		requestHeader.add("ChannelCode", props.getWebChannelCode());
-//
-//		HttpEntity<EscrowPaymentRequestDTO> requestEntity = new HttpEntity<>(escrowPaymentRequestDTO, requestHeader);
-//		ResponseEntity<String> response = restTemplate.postForEntity(escrowCreditURL, requestEntity, String.class);
-//
-//		if (response != null) {
-//			responseDTO = JsonBuilder.toClassTypeReference(response.getBody(),
-//					new TypeReference<ResponseDTO<EscrowPaymentRequestDTO>>() {
-//					});
-//			escrowPaymentRequestDTO1 = responseDTO.getData();
-//
-//		} else {
-//			log.info("---->>> No Response from escrow server");
-//			throw new AppException("---->>> No Response from escrow server");
-//		}
-//
-//		return escrowPaymentRequestDTO1;
-//	}
-
 }

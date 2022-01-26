@@ -109,4 +109,9 @@ public class EncryptUtil {
 
 		return decodedString;
 	}
+
+//	public static void main(String[] args) {
+//		System.out.println("password: "+ new EncryptUtil("1234abcd").encryptStringEncoded("dexter"));
+//		System.out.println("username: "+ new EncryptUtil("1234abcd").encryptStringEncoded("root"));
+//	}
 }

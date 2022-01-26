@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 @EnableAsync
 @SpringBootApplication
 @OpenAPIDefinition(info = @Info(title = "Resource Server API for Reloadly Application", 
-version = "1.0", description = "Open API documentation"))
+	version = "1.0", description = "Open API documentation"))
 @SecurityScheme(name = "Authorization", scheme = "apiKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER)
 @SecurityScheme(name = "ChannelCode", scheme = "apiKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER)
 public class TransactionManagementAppApplication {

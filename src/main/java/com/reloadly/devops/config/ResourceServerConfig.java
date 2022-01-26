@@ -34,13 +34,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter
 	@Override
     public void configure(HttpSecurity http) throws Exception
     {
-		http.headers().frameOptions().sameOrigin();
-    	
     	http
     		.csrf().disable()
     		.authorizeRequests()
 			.antMatchers("/", "/index", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**",
-				"/swagger-ui.html","/webjars/**","/resources/**", "/api/transaction-management/v1/**").permitAll()
+				"/swagger-ui.html","/webjars/**","/resources/**", "/api/credit/v1/**").permitAll()
 			.anyRequest().authenticated()
 			
 			.and().sessionManagement()

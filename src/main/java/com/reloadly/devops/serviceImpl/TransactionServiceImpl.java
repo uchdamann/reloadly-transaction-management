@@ -52,12 +52,14 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		case CREDIT:
 			CreditRequestDTO creditRequestDTO = (CreditRequestDTO) transactionReq;
-			balance = (BigDecimal)validAccount.get("balance");
+			balance = new BigDecimal((Double)validAccount.get("balance"));
 			newBalance = balance.add(creditRequestDTO.getAmount());
 
 			response = extCalls.updateBalanceExt(transactionReq.getAccountNumber(), newBalance);
-			
-			if(response.getCode() != "00") {
+
+			System.out.println("----->>> " + response.getCode());
+
+			if(!response.getCode().equals(SUCCESS.getCode())) {
 				throw new AppException("Error updating account balance");
 			}
 			
@@ -69,6 +71,7 @@ public class TransactionServiceImpl implements TransactionService {
 			transactionNotificationDTO.setTransactionType(CREDIT);
 
 			notification.notifyUser(transactionNotificationDTO);
+			break;
 		
 		case DEBIT:
 			DebitRequestDTO debitRequestDTO = (DebitRequestDTO) transactionReq;
